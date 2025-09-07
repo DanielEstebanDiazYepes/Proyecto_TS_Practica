@@ -4,11 +4,10 @@ import './App.css';
 
 const App: React.FC = () => {
   const [city, setCity] = useState<string>('');
-  const [countryCode, setCountryCode] = useState<string>('');
   const { weatherData, loading, error, getWeatherByCity, getWeatherByCoords, clearError } = useWeather();
 
   useEffect(() => {
-    // Obtener ubicación del usuario al cargar
+    // Intentar obtener ubicación automáticamente
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -17,8 +16,8 @@ const App: React.FC = () => {
             position.coords.longitude
           );
         },
-        (error) => {
-          console.log('Geolocalización no permitida:', error);
+        (err) => {
+          console.log('Geolocalización no permitida:', err);
         }
       );
     }
@@ -27,12 +26,19 @@ const App: React.FC = () => {
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (city.trim()) {
-      getWeatherByCity(city.trim(), countryCode.trim() || undefined);
+      getWeatherByCity(city.trim());
     }
   };
 
   const formatTime = (timestamp: number): string => {
-    return new Date(timestamp * 1000).toLocaleTimeString('es-ES');
+    return new Date(timestamp * 1000).toLocaleTimeString('es-ES', {
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  };
+
+  const getWeatherIconUrl = (iconCode: string): string => {
+    return `https://openweathermap.org/img/wn/${iconCode}@2x.png`;
   };
 
   return (
@@ -46,27 +52,21 @@ const App: React.FC = () => {
               type="text"
               value={city}
               onChange={(e) => setCity(e.target.value)}
-              placeholder="Ciudad (ej: Madrid)"
-              required
+              placeholder="Ej: Bogotá, Madrid, Tokyo..."
+              disabled={loading}
             />
-            <input
-              type="text"
-              value={countryCode}
-              onChange={(e) => setCountryCode(e.target.value.toUpperCase())}
-              placeholder="Código país (ej: ES)"
-              maxLength={2}
-              style={{ width: '80px' }}
-            />
-            <button type="submit" disabled={loading}>
-              {loading ? 'Buscando...' : 'Buscar'}
+            <button type="submit" disabled={loading || !city.trim()}>
+              {loading ? 'Buscando...' : 'Buscar Clima'}
             </button>
           </div>
         </form>
 
         {error && (
-          <div className="error">
-            <span>{error}</span>
-            <button onClick={clearError}>×</button>
+          <div className="error-message">
+            <span>❌ {error}</span>
+            <button onClick={clearError} className="error-close">
+              ×
+            </button>
           </div>
         )}
 
@@ -76,39 +76,55 @@ const App: React.FC = () => {
             
             <div className="weather-main">
               <img 
-                src={`https://openweathermap.org/img/wn/${weatherData.weather[0].icon}@2x.png`}
+                src={getWeatherIconUrl(weatherData.weather[0].icon)}
                 alt={weatherData.weather[0].description}
+                className="weather-icon"
               />
-              <div className="temp">{Math.round(weatherData.main.temp)}°C</div>
+              <div className="temperature">
+                {Math.round(weatherData.main.temp)}°C
+              </div>
             </div>
 
-            <div className="weather-desc">
+            <div className="weather-description">
               {weatherData.weather[0].description}
             </div>
 
             <div className="weather-details">
-              <div className="detail">
-                <span>🌡️ Sensación</span>
+              <div className="detail-item">
+                <span>🌡️ Sensación térmica</span>
                 <span>{Math.round(weatherData.main.feels_like)}°C</span>
               </div>
-              <div className="detail">
+              <div className="detail-item">
                 <span>💧 Humedad</span>
                 <span>{weatherData.main.humidity}%</span>
               </div>
-              <div className="detail">
+              <div className="detail-item">
                 <span>💨 Viento</span>
                 <span>{weatherData.wind.speed} m/s</span>
               </div>
-              <div className="detail">
-                <span>☁️ Nubes</span>
-                <span>{weatherData.clouds.all}%</span>
+              <div className="detail-item">
+                <span>📊 Presión</span>
+                <span>{weatherData.main.pressure} hPa</span>
               </div>
             </div>
 
             <div className="sun-times">
-              <div>🌅 Amanecer: {formatTime(weatherData.sys.sunrise)}</div>
-              <div>🌇 Atardecer: {formatTime(weatherData.sys.sunset)}</div>
+              <div className="sun-time">
+                <span>🌅 Amanecer:</span>
+                <span>{formatTime(weatherData.sys.sunrise)}</span>
+              </div>
+              <div className="sun-time">
+                <span>🌇 Atardecer:</span>
+                <span>{formatTime(weatherData.sys.sunset)}</span>
+              </div>
             </div>
+          </div>
+        )}
+
+        {!weatherData && !loading && (
+          <div className="welcome-message">
+            <p>¡Bienvenido! 🌎</p>
+            <p>Escribe una ciudad o permite la geolocalización para ver el clima</p>
           </div>
         )}
       </div>

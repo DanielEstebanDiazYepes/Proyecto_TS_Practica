@@ -37,10 +37,10 @@ class Server {
 
   private initializeErrorHandling(): void {
     // Manejo de errores 404
-    this.app.use((req, res) => {
+    this.app.use("/",(req, res) => {
       res.status(404).json({
         success: false,
-        error: 'Ruta no encontrada'
+        error: 'DANIEL'
       });
     });
 

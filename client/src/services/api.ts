@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { WeatherData, WeatherResponse } from '@shared/types';
+import { WeatherResponse } from '@shared/types';
 
 const API_BASE_URL = '/api';
 
