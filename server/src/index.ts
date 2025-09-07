@@ -2,8 +2,9 @@ import express from 'express';
 import dotenv from 'dotenv';
 import { corsMiddleware } from './middleware/cors';
 import { WeatherRoutes } from './routes/weatherRoutes';
+import path from 'path';
 
-dotenv.config();
+dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
 class Server {
   private app: express.Application;
@@ -36,7 +37,7 @@ class Server {
 
   private initializeErrorHandling(): void {
     // Manejo de errores 404
-    this.app.use('*', (req, res) => {
+    this.app.use((req, res) => {
       res.status(404).json({
         success: false,
         error: 'Ruta no encontrada'

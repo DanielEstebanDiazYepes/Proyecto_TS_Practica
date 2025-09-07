@@ -2,13 +2,13 @@ import axios from 'axios';
 import { WeatherData, WeatherError, WeatherResponse } from '@shared/types';
 
 export class WeatherService {
-  private apiKey: string;
+  private apiKey: string 
   private baseURL: string = 'https://api.openweathermap.org/data/2.5';
 
   constructor() {
-    this.apiKey = process.env.OPENWEATHER_API_KEY || '';
+    this.apiKey = process.env.API_CLIMA_KEY || '';
     if (!this.apiKey) {
-      throw new Error('OPENWEATHER_API_KEY no está configurada');
+      throw new Error('API_CLIMA_KEY no está configurada');
     }
   }
 
