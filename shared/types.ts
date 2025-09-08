@@ -1,4 +1,10 @@
-export interface WeatherData {
+/*
+CUANDO TRABAJAMOS CON TS LA MEJOR PRACTICA ES CREAR UN ARCHIVO TYPES.TS 
+DONDE DEFINIMOS LAS INTERFACES/TYPOS QUE VAMOS A USAR EN LA APLICACION
+Y EXPORTAMOS ESOS TIPOS PARA USARLOS EN LOS COMPONENTES
+*/
+
+export interface WeatherData { //REPRESENTACION DE LA RESPUESTA DE LA API DEL CLIMA
   coord: {
     lon: number;
     lat: number;
@@ -38,23 +44,23 @@ export interface WeatherData {
   cod: number;
 }
 
-export interface WeatherError {
+export interface WeatherError { //INTERFACE PARA MANEJAR ERRORES DE LA API
   cod: string;
   message: string;
 }
 
-export interface WeatherResponse {
+export interface WeatherResponse { //AQUI ENVOLVEMOS LA RESPUESTA DE LA API, ASI PODEMOS MANEJAR EXITO Y ERROR
   success: boolean;
-  data?: WeatherData;
+  data?: WeatherData; //LOS DATOSN SON OPCIONALES (?) PORQUE SI HAY UN ERROR NO HABRA DATOS
   error?: string;
 }
 
-export interface Coordinates {
+export interface Coordinates { // INTERFAZ PARA UN OBJETO DE COORDENADAS (ALTITU Y LONGITUD)
   lat: number;
   lon: number;
 }
 
-export interface CitySearchParams {
+export interface CitySearchParams {//INTERFAZ PARA LOS PARAMETROS DE BUSQUEDA POR CIUDAD
   city: string;
   countryCode?: string;
 }
