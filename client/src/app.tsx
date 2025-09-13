@@ -3,14 +3,19 @@ import { useWeather } from './hooks/useWeather';
 import './App.css';
 
 const App: React.FC = () => {
-  const [city, setCity] = useState<string>('');
+
+  //USAMOS EL HOOK PERSONALIZADO
+  //ESTADO PARA GUARDAR EL NOMBRE DE LA CIUDAD (const [city, setCity] = useState<string>(''); )
+  const [city, setCity] = useState<string>('');//<-- "city" ES EL ESTADO PARA GUARDAR EL NOMBRE DE LA CIUDAD, "setCity" ES LA FUNCION PARA ACTUALIZAR ESE ESTADO, INICIALMENTE ES UNA CADENA VACIA
+
+  //EXTRAEMOS DEL HOOK LOS DATOS Y FUNCIONES QUE VAMOS A USAR DE (useWeather)
   const { weatherData, loading, error, getWeatherByCity, getWeatherByCoords, clearError } = useWeather();
 
   useEffect(() => {
-    // Intentar obtener ubicación automáticamente
+    // INTENTA OBTENER UBICACION AUTOMAITICAMENTE SI EL NAVEGADOR LO PERMITE
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
-        (position) => {
+        (position) => { 
           getWeatherByCoords(
             position.coords.latitude,
             position.coords.longitude
@@ -23,14 +28,15 @@ const App: React.FC = () => {
     }
   }, [getWeatherByCoords]);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = (e: React.FormEvent) => {//FUNCION PARA EL SUBMIT DE FORMULARIO
+    e.preventDefault();//PA QUE LA PAGINA NO SE RECARGE AL BUSCAR
     if (city.trim()) {
-      getWeatherByCity(city.trim());
+      getWeatherByCity(city.trim());//LLAMAMOS A LA FUNCION DEL HOOK PARA BUSCAR EL CLIMA POR CIUDAD
+      setCity(''); //PA LIMPIAR EL INPUT DESPUES DE BUSCAR
     }
   };
 
-  const formatTime = (timestamp: number): string => {
+  const formatTime = (timestamp: number): string => {//FUNCION PARA FORMATEAR LA HORA DE AMANECER Y ATARDECER
     return new Date(timestamp * 1000).toLocaleTimeString('es-ES', {
       hour: '2-digit',
       minute: '2-digit'
