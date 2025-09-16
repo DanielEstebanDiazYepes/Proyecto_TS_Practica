@@ -64,3 +64,50 @@ export interface CitySearchParams {//INTERFAZ PARA LOS PARAMETROS DE BUSQUEDA PO
   city: string;
   countryCode?: string;
 }
+
+//TIPOS PARA LAS AUTENTICACION DE USUARIO
+
+export interface User {
+  id?: number;
+  email: string;
+  password: string;
+  name: string;
+  created_at?: Date;
+  updated_at?: Date;
+}
+
+export interface LoginRequest {
+  email: string;
+  password: string;
+}
+
+export interface RegisterRequest {
+  email: string;
+  password: string;
+  name: string;
+}
+
+export interface AuthResponse {
+  success: boolean;
+  message?: string;
+  token?: string;
+  user?: {
+    id: number;
+    email: string;
+    name: string;
+  };
+  error?: string;
+}
+
+export interface JwtPayload {
+  userId: number;
+  email: string;
+}
+
+declare global {
+  namespace Express {
+    interface Request {
+      user?: JwtPayload;
+    }
+  }
+}
